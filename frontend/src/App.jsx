@@ -27,7 +27,7 @@ export default function App() {
     setActiveAgent(-1)
 
     try {
-      const res = await fetch(`http://localhost:8000/topic/${encodeURIComponent(t)}`)
+      const res = await fetch(`https://deep-research-ai-kv84.onrender.com/topic/${encodeURIComponent(t)}`)
       if (!res.ok) throw new Error(`Server error: ${res.status}`)
 
       const reader = res.body.getReader()
