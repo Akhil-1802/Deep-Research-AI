@@ -12,6 +12,5 @@ app.add_middleware(
 
 
 @app.get("/topic/{topic}")
-def get_results(topic:str):
-    states = run_pipeline(topic)
-    return states
+def get_results(topic: str):
+    return {"topic": topic}
