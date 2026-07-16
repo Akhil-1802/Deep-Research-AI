@@ -10,9 +10,11 @@ const AGENTS = [
   { key: 'critic', label: 'Critic Agent', icon: '🧠', desc: 'Reviewing and scoring the report...' },
 ]
 
+const AGENT_INDEX = Object.fromEntries(AGENTS.map((a, i) => [a.key, i]))
+
 export default function App() {
   const [topic, setTopic] = useState('')
-  const [status, setStatus] = useState('idle') // idle | loading | done | error
+  const [status, setStatus] = useState('idle')
   const [activeAgent, setActiveAgent] = useState(-1)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
@@ -22,25 +24,42 @@ export default function App() {
     setStatus('loading')
     setResult(null)
     setError('')
-
-    // Simulate agent progress while waiting for API
-    let step = 0
-    setActiveAgent(0)
-    const interval = setInterval(() => {
-      step++
-      if (step < AGENTS.length) setActiveAgent(step)
-    }, 8000)
+    setActiveAgent(-1)
 
     try {
-      const res = await fetch(`https://deep-research-ai-kv84.onrender.com/topic/${encodeURIComponent(t)}`)
+      const res = await fetch(`http://localhost:8000/topic/${encodeURIComponent(t)}`)
       if (!res.ok) throw new Error(`Server error: ${res.status}`)
-      const data = await res.json()
-      clearInterval(interval)
-      setActiveAgent(AGENTS.length) // all done
-      setResult(data)
-      setStatus('done')
+
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const parts = buffer.split('\n\n')
+        buffer = parts.pop() // keep incomplete chunk
+
+        for (const part of parts) {
+          const eventLine = part.match(/^event: (.+)$/m)
+          const dataLine = part.match(/^data: (.+)$/m)
+          if (!eventLine || !dataLine) continue
+
+          const event = eventLine[1].trim()
+          const data = JSON.parse(dataLine[1])
+
+          if (event === 'agent_start') {
+            setActiveAgent(AGENT_INDEX[data.agent])
+          } else if (event === 'done') {
+            setResult(data)
+            setActiveAgent(AGENTS.length)
+            setStatus('done')
+          }
+        }
+      }
     } catch (e) {
-      clearInterval(interval)
       setError(e.message)
       setStatus('error')
       setActiveAgent(-1)

@@ -8,7 +8,7 @@ import os
 load_dotenv()
 
 #llm
-llm = ChatMistralAI(model = "magistral-small-latest",temperature=0)
+llm = ChatMistralAI(model = "mistral-small-latest", temperature=0)
 
 #1st agent
 def build_search_agent():
