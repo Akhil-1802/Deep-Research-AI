@@ -5,7 +5,7 @@ from pipeline import run_pipeline
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173","https://deep-research-ai-system.netlify.app/"],
+    allow_origins=["http://localhost:5173","https://deep-research-ai-system.netlify.app"],
     allow_methods=["GET"],
     allow_headers=["*"],
 )
