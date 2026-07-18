@@ -1,5 +1,7 @@
 # 🔬 Multi-Agent Research System
 
+🌐 **Live Demo:** [https://deep-research-ai-system.netlify.app](https://deep-research-ai-system.netlify.app)
+
 An AI-powered research assistant that uses a **4-agent pipeline** to automatically search the web, scrape content, write a structured report, and critically review it — all from a single topic input.
 
 Built with **LangChain**, **Mistral AI**, **FastAPI**, and a **React + Vite + Tailwind CSS** frontend.
