@@ -15,7 +15,7 @@ app.add_middleware(
 def healthcheck():
     return {"status":"ok"}
 @app.head("/health")
-def health(request:Request):
+def health():
     return {"status":"ok"}
 
 @app.get("/topic/{topic}")
