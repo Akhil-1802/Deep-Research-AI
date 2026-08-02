@@ -6,11 +6,14 @@ from pipeline import run_pipeline_stream
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://deep-research-ai-system.netlify.app"],
+    allow_origins=["*"],
     allow_methods=["GET"],
     allow_headers=["*"],
 )
 
+@app.get("/health")
+def healthcheck():
+    return {"status":"ok"}
 
 @app.get("/topic/{topic}")
 async def get_results(topic: str):
